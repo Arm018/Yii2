@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <h5 class="card-title">Authors</h5>
             <p class="card-text">
-                <?= implode(', ', \yii\helpers\ArrayHelper::getColumn($book->authors, function($author) {
+                <?= implode(', ', \yii\helpers\ArrayHelper::getColumn($book->authors, function ($author) {
                     return Html::encode($author->first_name . ' ' . $author->last_name);
                 })) ?>
             </p>
