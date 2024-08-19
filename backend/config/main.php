@@ -19,6 +19,12 @@ return [
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
+            'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
+        ],
+        'admin' => [
+            'class' => 'yii\web\User',
+            'identityClass' => 'backend\models\Admin',
+            'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
         'session' => [
@@ -37,14 +43,26 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'books' => 'book/index',
+                'books/<id:\d+>' => 'book/view',
+                'books/create' => 'book/create',
+                'books/<id:\d+>/update' => 'book/update',
+                'books/<id:\d+>/delete' => 'book/delete',
+
+                'authors' => 'author/index',
+                'authors/<id:\d+>' => 'author/view',
+                'authors/create' => 'author/create',
+                'authors/<id:\d+>/update' => 'author/update',
+                'authors/<id:\d+>/delete' => 'author/delete',
             ],
         ],
-        */
+
+
     ],
     'params' => $params,
 ];

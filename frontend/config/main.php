@@ -36,14 +36,19 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'books' => 'book/index',
+                'books/<id:\d+>' => 'book/view',
+                'authors' => 'author/index',
+                'authors/<id:\d+>' => 'author/view',
             ],
         ],
-        */
+
+
     ],
     'params' => $params,
 ];
