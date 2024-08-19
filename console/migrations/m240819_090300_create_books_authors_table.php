@@ -5,14 +5,14 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%book_author}}`.
  */
-class m240819_090300_create_book_author_table extends Migration
+class m240819_090300_create_books_authors_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('book_author', [
+        $this->createTable('books_authors', [
             'book_id' => $this->integer()->notNull(),
             'author_id' => $this->integer()->notNull(),
             'PRIMARY KEY(book_id, author_id)',
@@ -21,30 +21,30 @@ class m240819_090300_create_book_author_table extends Migration
         // Create index for columns
         $this->createIndex(
             'idx-book_author-book_id',
-            'book_author',
+            'books_authors',
             'book_id'
         );
         $this->createIndex(
             'idx-book_author-author_id',
-            'book_author',
+            'books_authors',
             'author_id'
         );
 
         // Add foreign keys
         $this->addForeignKey(
             'fk-book_author-book_id',
-            'book_author',
+            'books_authors',
             'book_id',
-            'book',
+            'books',
             'id',
             'CASCADE',
             'CASCADE'
         );
         $this->addForeignKey(
             'fk-book_author-author_id',
-            'book_author',
+            'books_authors',
             'author_id',
-            'author',
+            'authors',
             'id',
             'CASCADE',
             'CASCADE'
@@ -58,22 +58,22 @@ class m240819_090300_create_book_author_table extends Migration
     {
         $this->dropForeignKey(
             'fk-book_author-book_id',
-            'book_author'
+            'books_authors'
         );
         $this->dropForeignKey(
             'fk-book_author-author_id',
-            'book_author'
+            'books_authors'
         );
 
         $this->dropIndex(
             'idx-book_author-book_id',
-            'book_author'
+            'books_authors'
         );
         $this->dropIndex(
             'idx-book_author-author_id',
-            'book_author'
+            'books_authors'
         );
 
-        $this->dropTable('book_author');
+        $this->dropTable('books_authors');
     }
 }

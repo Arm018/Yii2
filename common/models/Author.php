@@ -20,12 +20,12 @@ class Author extends ActiveRecord
 {
     public static function tableName()
     {
-        return 'author';
+        return 'authors';
     }
 
     public static function getAuthorList()
     {
-        return self::find()
+            return self::find()
             ->select(['CONCAT(first_name, " ", last_name) AS name', 'id'])
             ->indexBy('id')
             ->column();
@@ -56,9 +56,14 @@ class Author extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+    public function getBooksAuthors()
+    {
+        return $this->hasMany(BooksAuthors::class, ['author_id' => 'id']);
+    }
+
     public function getBooks()
     {
         return $this->hasMany(Book::class, ['id' => 'book_id'])
-            ->viaTable('book_author', ['author_id' => 'id']);
+            ->via('booksAuthors');
     }
 }

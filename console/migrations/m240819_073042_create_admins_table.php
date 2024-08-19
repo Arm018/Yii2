@@ -5,14 +5,14 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%admin}}`.
  */
-class m240819_073042_create_admin_table extends Migration
+class m240819_073042_create_admins_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%admin}}', [
+        $this->createTable('{{%admins}}', [
             'id' => $this->primaryKey(),
             'username' => $this->string()->notNull()->unique(),
             'password_hash' => $this->string(60)->notNull(),
@@ -26,6 +26,6 @@ class m240819_073042_create_admin_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%admin}}');
+        $this->dropTable('{{%admins}}');
     }
 }

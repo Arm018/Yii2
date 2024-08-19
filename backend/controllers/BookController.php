@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\Admin;
 use Yii;
 use common\models\Book;
 use common\models\Author;
@@ -12,29 +13,8 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
-class BookController extends Controller
+class BookController extends AdminController
 {
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ],
-        ];
-    }
 
     public function actionIndex()
     {
@@ -59,17 +39,19 @@ class BookController extends Controller
         $model = new Book();
 
         if ($model->load(Yii::$app->request->post())) {
-            $selectedAuthorIds = Yii::$app->request->post('Book')['author_ids'];
 
             if ($model->save()) {
-                if ($selectedAuthorIds) {
-                    foreach ($selectedAuthorIds as $authorId) {
-                        Yii::$app->db->createCommand()->insert('book_author', [
+                Yii::$app->db->createCommand()->delete('books_authors', ['book_id' => $model->id])->execute();
+
+                if (!empty($model->authorIds)) {
+                    foreach ($model->authorIds as $authorId) {
+                        Yii::$app->db->createCommand()->insert('books_authors', [
                             'book_id' => $model->id,
                             'author_id' => $authorId,
                         ])->execute();
                     }
                 }
+
                 return $this->redirect(['index']);
             }
         }
@@ -79,6 +61,7 @@ class BookController extends Controller
             'authors' => Author::getAuthorList(),
         ]);
     }
+
 
 
     public function actionUpdate($id)
@@ -111,7 +94,7 @@ class BookController extends Controller
     protected function saveBookAuthors($bookId, $authorIds)
     {
         Yii::$app->db->createCommand()
-            ->delete('book_author', ['book_id' => $bookId])
+            ->delete('books_authors', ['book_id' => $bookId])
             ->execute();
 
         if (!empty($authorIds)) {
@@ -121,7 +104,7 @@ class BookController extends Controller
             }
 
             Yii::$app->db->createCommand()
-                ->batchInsert('book_author', ['book_id', 'author_id'], $rows)
+                ->batchInsert('books_authors', ['book_id', 'author_id'], $rows)
                 ->execute();
         }
     }

@@ -12,7 +12,7 @@ class m240819_073224_insert_initial_admin extends Migration
      */
     public function safeUp()
     {
-        $this->insert('{{%admin}}', [
+        $this->insert('{{%admins}}', [
             'username' => 'admin',
             'password_hash' => Yii::$app->security->generatePasswordHash('password'),
             'auth_key' => Yii::$app->security->generateRandomString(),
@@ -24,7 +24,7 @@ class m240819_073224_insert_initial_admin extends Migration
      */
     public function safeDown()
     {
-        $this->delete('{{%admin}}', ['username' => 'admin']);
+        $this->delete('{{%admins}}', ['username' => 'admin']);
 
     }
 

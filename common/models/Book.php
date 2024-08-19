@@ -17,11 +17,11 @@ use yii\db\ActiveRecord;
  */
 class Book extends ActiveRecord
 {
-    public $author_ids = [];
+    public $authorIds = [];
 
     public static function tableName()
     {
-        return '{{%book}}';
+        return '{{%books}}';
     }
 
     public function rules()
@@ -31,7 +31,7 @@ class Book extends ActiveRecord
             [['description'], 'string'],
             [['publication_year'], 'integer'],
             [['title'], 'string', 'max' => 255],
-            [['author_ids'], 'safe'],
+            ['authorIds', 'each', 'rule' => ['integer']],
 
         ];
     }
@@ -53,11 +53,15 @@ class Book extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+    public function getBooksAuthors()
+    {
+        return $this->hasMany(BooksAuthors::class, ['book_id' => 'id']);
+    }
+
     public function getAuthors()
     {
         return $this->hasMany(Author::class, ['id' => 'author_id'])
-            ->viaTable('book_author', ['book_id' => 'id']);
+            ->via('booksAuthors');
     }
-
 
 }

@@ -21,11 +21,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
     <?= $form->field($model, 'publication_year')->textInput() ?>
 
-    <?= $form->field($model, 'author_ids')->dropDownList(
+    <?= $form->field($model, 'authorIds')->dropDownList(
         $authors,
-        ['prompt' => 'Select Authors', 'multiple' => true]
+        [
+            'multiple' => true,
+            'size' => 10,
+            'prompt' => 'Select Authors',
+        ]
     ) ?>
-
     <div class="form-group mt-3">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>

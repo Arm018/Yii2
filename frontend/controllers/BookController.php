@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Book;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -11,10 +12,15 @@ class BookController extends Controller
 
     public function actionIndex()
     {
-        $books = Book::find()->all();
+        $dataProvider = new ActiveDataProvider([
+            'query' => Book::find(),
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
 
         return $this->render('index', [
-            'books' => $books,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
