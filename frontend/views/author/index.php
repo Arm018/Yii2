@@ -1,12 +1,15 @@
 <?php
 
+use yii\widgets\ListView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/** @var yii\web\View $this */
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 /** @var common\models\Author[] $authors */
 
 $this->title = 'Authors';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="author-index">
 

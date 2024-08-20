@@ -1,12 +1,16 @@
 <?php
 
+use common\models\Book;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
-/* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/** @var yii\web\View $this */
+/** @var backend\models\BookSearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Books';
+$this->title = Yii::t('app', 'Books');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="book-index">
@@ -14,11 +18,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Book', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Create Book'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -26,19 +33,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'title',
             'description:ntext',
             'publication_year',
-
             [
-                'attribute' => 'authors',
-                'value' => function ($model) {
-                    return implode(', ', \yii\helpers\ArrayHelper::getColumn($model->authors, function($author) {
-                        return $author->first_name . ' ' . $author->last_name;
-                    }));
-                },
                 'label' => 'Authors',
+                'value' => function ($model) {
+                    return implode(', ', array_map(function ($author) {
+                        return $author->first_name . ' ' . $author->last_name;
+                    }, $model->authors));
+                },
+            ],
+            [
+                'class' => ActionColumn::class,
+                'urlCreator' => function ($action, Book $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'id' => $model->id]);
+                 }
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+
 
 </div>

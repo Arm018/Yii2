@@ -1,39 +1,20 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Book */
-/* @var $authors array */
+/** @var yii\web\View $this */
+/** @var common\models\Book $model */
 
-$this->title = 'Create Book';
-$this->params['breadcrumbs'][] = ['label' => 'Books', 'url' => ['index']];
+$this->title = Yii::t('app', 'Create Book');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Books'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="book-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-    <?= $form->field($model, 'publication_year')->textInput() ?>
-
-    <?= $form->field($model, 'authorIds')->dropDownList(
-        $authors,
-        [
-            'multiple' => true,
-            'size' => 10,
-            'prompt' => 'Select Authors',
-        ]
-    ) ?>
-    <div class="form-group mt-3">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
+    <?= $this->render('_form', [
+        'model' => $model,
+    ]) ?>
 
 </div>

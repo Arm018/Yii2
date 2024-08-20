@@ -18,9 +18,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'itemView' => function ($model, $key, $index, $widget) {
             /* @var $model common\models\Book */
-            return '<div class="col-lg-4">' .
+            return
+                '<div class="col-lg-4">' .
                 '<div class="card mb-4">' .
-                '<div class="card-body">' .
+                '<div class="card-body text-center">' .
                 '<h5 class="card-title">' . Html::encode($model->title) . '</h5>' .
                 '<p class="card-text">' . Html::encode($model->description) . '</p>' .
                 '<p class="card-text"><small class="text-muted">Published: ' . Html::encode($model->publication_year) . '</small></p>' .
