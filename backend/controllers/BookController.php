@@ -2,12 +2,16 @@
 
 namespace backend\controllers;
 
+use backend\models\UploadForm;
+use common\models\Author;
 use common\models\Book;
 use backend\models\BookSearch;
 use backend\controllers\AdminController;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * BookController implements the CRUD actions for Book model.
@@ -111,4 +115,94 @@ class BookController extends AdminController
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    public function actionUpload()
+    {
+        $model = new UploadForm();
+
+        if (Yii::$app->request->isPost) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            if ($model->validate()) {
+                $uploadPath = 'uploads/';
+                $filePath = $uploadPath . $model->file->baseName . '.' . $model->file->extension;
+
+                if ($model->file->saveAs($filePath)) {
+                    $this->processXlsx($filePath);
+                    Yii::$app->session->setFlash('success', 'File uploaded and books updated successfully.');
+                } else {
+                    Yii::$app->session->setFlash('error', 'There was an error saving the file.');
+                }
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', 'File validation failed.');
+            }
+        }
+
+        return $this->render('upload', ['model' => $model]);
+    }
+
+    protected function processXlsx($filePath)
+    {
+        $reader = new Xlsx();
+        $spreadsheet = $reader->load($filePath);
+        $sheetData = $spreadsheet->getActiveSheet()->toArray();
+
+        $errorMessages = [];
+
+        foreach ($sheetData as $row) {
+            if ($row[0] == 'Title') {
+                continue;
+            }
+
+            $book = Book::findOne(['title' => $row[0]]);
+            if ($book === null) {
+                $book = new Book();
+            }
+            $book->title = $row[0];
+            $book->description = $row[1];
+            $book->publication_year = $row[2];
+
+            $authors = explode('|', $row[3]);
+            $authorIds = [];
+            $allAuthorsFound = true;
+
+            foreach ($authors as $authorFullName) {
+                $authorFullName = trim($authorFullName);
+                $authorNameParts = preg_split('/\s+/', $authorFullName);
+
+                if (count($authorNameParts) >= 2) {
+                    $firstName = array_shift($authorNameParts);
+                    $lastName = implode(' ', $authorNameParts);
+
+                    $author = Author::findOne([
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                    ]);
+
+                    if ($author) {
+                        $authorIds[] = $author->id;
+                    } else {
+                        $errorMessages[] = "No author found with name: $authorFullName";
+                        $allAuthorsFound = false;
+                    }
+                } else {
+                    $errorMessages[] = "No Author Found With Name: $authorFullName";
+                    $allAuthorsFound = false;
+                }
+            }
+
+            if ($allAuthorsFound) {
+                $book->authorIds = $authorIds;
+                if (!$book->save()) {
+                    Yii::$app->session->setFlash('error', 'Error saving book: ' . $book->title);
+                }
+            } else {
+                Yii::$app->session->setFlash('error', implode('<br>', $errorMessages));
+            }
+        }
+        if (!empty($errorMessages)) {
+            Yii::$app->session->setFlash('error', implode('<br>', $errorMessages));
+        }
+    }
+
 }

@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('app', 'Create Book'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Upload Books'), ['upload'], ['class' => 'btn btn-primary']) ?> <!-- Upload button added -->
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
