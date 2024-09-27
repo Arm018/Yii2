@@ -2,11 +2,16 @@
 
 namespace backend\controllers;
 
+use backend\models\UploadForm;
 use common\models\Author;
 use backend\models\AuthorSearch;
 use backend\controllers\AdminController;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use Yii;
+
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * AuthorController implements the CRUD actions for Author model.
@@ -112,5 +117,52 @@ class AuthorController extends AdminController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionUpload()
+    {
+        $model = new UploadForm();
+
+        if (Yii::$app->request->isPost) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            if ($model->validate()) {
+
+                $filePath = $model->file->baseName . '.' . $model->file->extension;
+                if ($model->file->saveAs($filePath)) {
+                    $this->processXlsx($filePath);
+                    Yii::$app->session->setFlash('success', 'File uploaded and authors updated successfully.');
+                } else {
+                    Yii::$app->session->setFlash('error', 'There was an error saving the file.');
+                }
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', 'File validation failed.');
+            }
+        }
+
+        return $this->render('upload', ['model' => $model]);
+    }
+
+
+    protected function processXlsx($filePath)
+    {
+        $reader = new Xlsx();
+        $spreadsheet = $reader->load($filePath);
+        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+
+        foreach ($sheetData as $row) {
+            if ($row['A'] === 'First Name' && $row['B'] === 'Last Name' && $row['C'] === 'Biography') {
+                continue;
+            }
+
+            $author = new Author();
+            $author->first_name = $row['A'];
+            $author->last_name = $row['B'];
+            $author->biography = $row['C'];
+
+            if (!$author->save()) {
+                Yii::error('Error saving author: ' . implode(', ', $author->getFirstErrors()), __METHOD__);
+            }
+        }
     }
 }
