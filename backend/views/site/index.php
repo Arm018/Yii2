@@ -11,8 +11,8 @@ $this->title = 'My Yii Application';
     <div class="jumbotron text-center bg-transparent">
         <h2 class="display-4">Welcome to Admin Dashboard!</h2>
         <div style="margin-top: 50px">
-        <a href="<?= Url::to(['/book/index']) ?>" class="btn btn-outline-secondary">Manage Books</a>
-        <a href="<?= Url::to(['/author/index']) ?>" class="btn btn-outline-secondary">Manage Authors</a>
+            <a href="<?= Url::to(['/books']) ?>" class="btn btn-outline-secondary">Manage Books</a>
+            <a href="<?= Url::to(['/author/index']) ?>" class="btn btn-outline-secondary">Manage Authors</a>
         </div>
     </div>
 

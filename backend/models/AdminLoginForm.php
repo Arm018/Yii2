@@ -1,12 +1,9 @@
 <?php
-
 namespace backend\models;
 
 use Yii;
 use yii\base\Model;
 use backend\models\Admin;
-
-// Import your Admin model
 
 /**
  * Admin login form

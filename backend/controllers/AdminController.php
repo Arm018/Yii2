@@ -14,6 +14,7 @@ class AdminController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                'user' => 'admin',
                 'rules' => [
                     [
                         'allow' => true,

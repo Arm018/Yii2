@@ -21,28 +21,29 @@ class SiteController extends Controller
      */
     public function behaviors()
     {
-        return [
+        return
+            [
             'access' => [
                 'class' => AccessControl::class,
+                'user' => 'admin',
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['index','login','error'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout'],
                         'allow' => true,
-                        'roles' => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
+                'verbs' => [
+                    'class' => VerbFilter::class,
+                    'actions' => [
+                        'logout' => ['post'],
+                    ],
                 ],
-            ],
-        ];
+            ];
     }
 
     /**
@@ -78,11 +79,9 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $this->layout = 'blank';
-
         $model = new AdminLoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->actionIndex();
         }
 
         $model->password = '';

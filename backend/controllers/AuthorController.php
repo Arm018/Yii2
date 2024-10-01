@@ -9,6 +9,7 @@ use backend\controllers\AdminController;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use Yii;
 
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
