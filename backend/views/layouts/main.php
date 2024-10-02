@@ -56,6 +56,10 @@ AppAsset::register($this);
             [
                 'label' => 'Authors',
                 'url' => ['/author/index']
+            ],
+            [
+                'label' => 'Withdrawals',
+                'url' => ['/withdrawal/index']
             ]
         ];
     } else {

@@ -21,12 +21,18 @@ $this->params['breadcrumbs'][] = $this->title;
             <h5 class="card-title">Publication Year</h5>
             <p class="card-text"><?= Html::encode($book->publication_year) ?></p>
 
+            <h5 class="card-title">Price</h5>
+            <p class="card-text">$<?= Html::encode($book->price) ?></p>
+
             <h5 class="card-title">Authors</h5>
             <p class="card-text">
                 <?= implode(', ', \yii\helpers\ArrayHelper::getColumn($book->authors, function ($author) {
                     return Html::encode($author->first_name . ' ' . $author->last_name);
                 })) ?>
             </p>
+        </div>
+        <div class="card-footer text-center">
+            <?= Html::a('Buy', ['buy', 'id' => $book->id], ['class' => 'btn btn-success btn-lg']) ?>
         </div>
     </div>
 

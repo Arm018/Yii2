@@ -20,6 +20,8 @@ use common\models\Author;
 
     <?= $form->field($model, 'publication_year')->textInput() ?>
 
+    <?= $form->field($model, 'price')->input('number', ['step' => '0.01']) ?>
+
     <?= $form->field($model, 'authorIds')->dropDownList(
         Author::getAuthorList(),
         ['multiple' => true]

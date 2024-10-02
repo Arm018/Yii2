@@ -161,8 +161,8 @@ class BookController extends AdminController
             $book->title = $row[0];
             $book->description = $row[1];
             $book->publication_year = $row[2];
-
             $authors = explode('|', $row[3]);
+            $book->price = $row[4];
             $authorIds = [];
             $allAuthorsFound = true;
 

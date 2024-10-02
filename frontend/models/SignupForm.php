@@ -57,7 +57,15 @@ class SignupForm extends Model
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
         $user->referral_code = Yii::$app->security->generateRandomString(10);
-        $user->referral_link = Yii::$app->urlManager->createAbsoluteUrl(['site/signup', 'referral' => $user->referral_code]);
+        $user->referral_link = Yii::$app->urlManager->createAbsoluteUrl(['site/index', 'referral' => $user->referral_code]);
+
+        $referralCode = Yii::$app->request->cookies->getValue('referral_code');
+        if ($referralCode) {
+            $referrer = User::findOne(['referral_code' => $referralCode]);
+            if ($referrer) {
+                $user->referrer_id = $referrer->id;
+            }
+        }
 
         if ($user->save()) {
             $balance = new Balance();
@@ -74,6 +82,7 @@ class SignupForm extends Model
 
         return false;
     }
+
 
 
     /**

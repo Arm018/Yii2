@@ -73,10 +73,20 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($referral = null)
     {
+        if ($referral !== null) {
+            $cookie = new \yii\web\Cookie([
+                'name' => 'referral_code',
+                'value' => $referral,
+                'expire' => time() + 60 * 60 * 24 * 30,
+            ]);
+            Yii::$app->response->cookies->add($cookie);
+        }
+
         return $this->render('index');
     }
+
 
     /**
      * Logs in a user.
@@ -223,4 +233,17 @@ class SiteController extends Controller
             'model' => $model
         ]);
     }
+
+    public function actionReferral($code)
+    {
+        $cookie = new \yii\web\Cookie([
+            'name' => 'referral_code',
+            'value' => $code,
+            'expire' => time() + 60 * 60 * 24 * 30,
+        ]);
+        Yii::$app->response->cookies->add($cookie);
+
+        return $this->redirect(['/site/signup']);
+    }
+
 }

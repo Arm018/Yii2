@@ -17,6 +17,7 @@ class m240819_085504_create_books_table extends Migration
             'title' => $this->string()->notNull(),
             'description' => $this->text()->notNull(),
             'publication_year' => $this->integer()->notNull(),
+            'price' => $this->decimal(10, 2)->notNull(),
         ]);
 
     }

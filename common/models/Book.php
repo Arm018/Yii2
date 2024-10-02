@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property string $title
  * @property string $description
  * @property int $publication_year
+ * @property float $price
  *
  * @property Author[] $authors
  */
@@ -31,6 +32,7 @@ class Book extends ActiveRecord
             [['description'], 'string'],
             [['publication_year'], 'integer'],
             [['title'], 'string', 'max' => 255],
+            [['price'], 'number', 'min' => 0],
             ['authorIds', 'each', 'rule' => ['integer']],
 
         ];
@@ -43,6 +45,7 @@ class Book extends ActiveRecord
             'title' => 'Title',
             'description' => 'Description',
             'publication_year' => 'Publication Year',
+            'price' => 'Price',
             'author_ids' => 'Authors',
 
         ];

@@ -3,8 +3,6 @@
 namespace backend\controllers;
 
 use backend\models\AdminLoginForm;
-
-// Import the new AdminLoginForm model
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;

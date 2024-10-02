@@ -1,36 +1,35 @@
 <?php
-
-use yii\widgets\ListView;
 use yii\helpers\Html;
-use yii\helpers\Url;
-
-/* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+use yii\widgets\ListView;
 
 $this->title = 'Books';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-book-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<h1 class="text-center"><?= Html::encode($this->title) ?></h1>
 
-    <?= ListView::widget([
-        'dataProvider' => $dataProvider,
-        'itemView' => function ($model, $key, $index, $widget) {
-            /* @var $model common\models\Book */
-            return
-                '<div class="col-lg-4">' .
-                '<div class="card mb-4">' .
-                '<div class="card-body text-center">' .
-                '<h5 class="card-title">' . Html::encode($model->title) . '</h5>' .
-                '<p class="card-text">' . Html::encode($model->description) . '</p>' .
-                '<p class="card-text"><small class="text-muted">Published: ' . Html::encode($model->publication_year) . '</small></p>' .
-                '<a href="' . Url::to(['book/view', 'id' => $model->id]) . '" class="btn btn-primary">View Details</a>' .
-                '</div>' .
-                '</div>' .
-                '</div>';
-        },
-        'options' => ['class' => 'row'],
-    ]) ?>
-
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <div class="row justify-content-center">
+            <?= ListView::widget([
+                'dataProvider' => $dataProvider,
+                'itemOptions' => ['class' => 'col-md-12 mt-2 mb-4 d-flex align-items-stretch'],
+                'layout' => "{items}\n{pager}",
+                'itemView' => function ($model, $key, $index, $widget) {
+                    return '
+                        <div class="card h-100 text-center shadow-sm" style="min-height: 200px;"> <!-- Adjusted card height -->
+                            <div class="card-body">
+                                <h5 class="card-title">' . Html::encode($model->title) . '</h5>
+                                <p class="card-text"><strong>Price:</strong> $' . Html::encode($model->price) . '</p>
+                            </div>
+                            <div class="card-footer">
+                                <p>' . Html::a('View Details', ['view', 'id' => $model->id], ['class' => 'btn btn-primary']) . ' ' .
+                        Html::a('Buy', ['buy', 'id' => $model->id], ['class' => 'btn btn-success']) . '</p>
+                            </div>
+                        </div>
+                    ';
+                },
+            ]) ?>
+        </div>
+    </div>
 </div>

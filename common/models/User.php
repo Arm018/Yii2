@@ -21,6 +21,9 @@ use yii\web\IdentityInterface;
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
+ * @property string $referral_link
+ * @property string $referrer_code
+ * @property integer $referrer_id
  * @property string $password write-only password
  */
 class User extends ActiveRecord implements IdentityInterface
@@ -56,6 +59,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['referral_code'], 'string', 'max' => 10],
             [['referral_code'], 'unique'],
+            [['referrer_id'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];

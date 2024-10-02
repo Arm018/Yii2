@@ -10,6 +10,7 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property int $user_id
  * @property float $amount
+ * @property float $commission_amount
  * @property string $updated_at
  * @property User $user
  */
@@ -25,7 +26,7 @@ class Balance extends ActiveRecord
         return [
             [['user_id', 'amount'], 'required'],
             [['user_id'], 'integer'],
-            [['amount'], 'number'],
+            [['amount', 'commission_amount'], 'number'],
             [['date'], 'safe'],
         ];
     }

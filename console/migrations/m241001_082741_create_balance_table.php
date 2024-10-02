@@ -16,6 +16,7 @@ class m241001_082741_create_balance_table extends Migration
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull(),
             'amount' => $this->decimal(10, 2)->notNull()->defaultValue(0.00),
+            'commission_amount' => $this->decimal(10, 2)->notNull()->defaultValue(0), 
             'updated_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ]);
 
