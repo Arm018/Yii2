@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Withdrawal;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -29,24 +30,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 <td><?= Html::encode($withdrawal->id) ?></td>
                 <td><?= Html::encode($withdrawal->user_id) ?></td>
                 <td><?= Html::encode($withdrawal->amount) ?></td>
-                <td><?= Html::encode($withdrawal->status) ?></td>
+                <td><?= Html::encode($withdrawal->getStatusName()) ?></td>
                 <td><?= Html::encode($withdrawal->request_date) ?></td>
                 <td>
-                    <?= Html::a('Approve', ['approve', 'id' => $withdrawal->id], [
-                        'class' => 'btn btn-success',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to approve this withdrawal?',
-                            'method' => 'post',
-                        ],
-                    ]) ?>
-                    <?= Html::a('Decline', ['decline', 'id' => $withdrawal->id], [
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to decline this withdrawal?',
-                            'method' => 'post',
-                        ],
-                    ]) ?>
+                    <?php if ($withdrawal->status === Withdrawal::STATUS_PENDING): ?>
+                        <?= Html::a('Approve', ['approve', 'id' => $withdrawal->id], [
+                            'class' => 'btn btn-success',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to approve this withdrawal?',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
+                        <?= Html::a('Decline', ['decline', 'id' => $withdrawal->id], [
+                            'class' => 'btn btn-danger',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to decline this withdrawal?',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
+                    <?php else: ?>
+                        Transaction is finished
+                    <?php endif; ?>
                 </td>
+
             </tr>
         <?php endforeach; ?>
         </tbody>

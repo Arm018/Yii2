@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\controllers\AdminController;
 use common\models\Balance;
+use common\models\User;
 use common\models\Withdrawal;
 use Yii;
 use yii\db\Exception;
@@ -27,20 +28,19 @@ class WithdrawalController extends AdminController
     public function actionApprove($id): \yii\web\Response
     {
         $withdrawal = Withdrawal::findOne($id);
-        if (!$withdrawal) {
-            throw new NotFoundHttpException('Withdrawal request not found.');
-        }
-        $withdrawal->status = 'approved';
-        $withdrawal->request_date = date('Y-m-d H:i:s');
+
+        $user = User::findOne($withdrawal->user_id);
+        $userBalance = $user->balance;
+
+        $withdrawal->status = Withdrawal::STATUS_SUCCESS;
 
         if ($withdrawal->save()) {
-            $userBalance = Balance::findOne(['user_id' => $withdrawal->user_id]);
-            if ($userBalance) {
-                $userBalance->commission_amount -= $withdrawal->amount;
-                $userBalance->save();
+            $userBalance->commission_amount -= $withdrawal->amount;
+            if ($userBalance->save()) {
+                Yii::$app->session->setFlash('success', 'Withdrawal request approved successfully.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Failed to update user balance.');
             }
-
-            Yii::$app->session->setFlash('success', 'Withdrawal request approved successfully.');
         } else {
             Yii::$app->session->setFlash('error', 'Failed to approve withdrawal request.');
         }
@@ -55,11 +55,8 @@ class WithdrawalController extends AdminController
     public function actionDecline($id): \yii\web\Response
     {
         $withdrawal = Withdrawal::findOne($id);
-        if (!$withdrawal) {
-            throw new NotFoundHttpException('Withdrawal request not found.');
-        }
 
-        $withdrawal->status = 'declined';
+        $withdrawal->status = Withdrawal::STATUS_DECLINED;
 
         if ($withdrawal->save()) {
             Yii::$app->session->setFlash('success', 'Withdrawal request declined successfully.');
