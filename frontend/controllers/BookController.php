@@ -6,6 +6,7 @@ use common\models\Balance;
 use common\models\Book;
 use common\models\User;
 use common\models\UserBook;
+use common\services\CommissionService;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -13,6 +14,13 @@ use yii\web\NotFoundHttpException;
 
 class BookController extends Controller
 {
+    private CommissionService $commissionService;
+
+    public function __construct($id, $module, CommissionService $commissionService, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->commissionService = $commissionService;
+    }
 
     public function actionIndex()
     {
@@ -39,58 +47,20 @@ class BookController extends Controller
     public function actionBuy($id)
     {
         $book = Book::findOne($id);
-        if (!$book) {
-            throw new NotFoundHttpException('Book not found');
-        }
 
         $user = Yii::$app->user->identity;
         if ($user === null) {
             return $this->redirect(['site/login']);
         }
 
-        $existingPurchase = UserBook::find()
-            ->where(['user_id' => $user->getId(), 'book_id' => $book->id])
-            ->one();
-
-        if ($existingPurchase) {
-            Yii::$app->session->setFlash('error', 'You have already purchased this book.');
-            return $this->redirect(['book/index']);
-        }
-
-        $book_price = $book->price;
-        $balance = Balance::findOne(['user_id' => $user->getId()]);
-        if ($balance === null || $balance->amount < $book_price) {
+        $balance = $this->getUserBalance($user);
+        if (!$this->hasEnoughBalance($balance, $book->price)) {
             Yii::$app->session->setFlash('error', 'You don\'t have enough balance to buy this book');
             return $this->redirect(['book/index']);
         }
 
-        $balance->amount -= $book_price;
-        if (!$balance->save()) {
+        if (!$this->processPurchase($balance, $book)) {
             Yii::$app->session->setFlash('error', 'Unable to buy this book, Please try again');
-            return $this->redirect(['book/index']);
-        }
-
-        $commission = 0;
-        if ($user->referrer_id) {
-            $referrer = User::findOne($user->referrer_id);
-            if ($referrer) {
-                $commission = $book_price * 0.1;
-                $referrer_balance = Balance::findOne(['user_id' => $referrer->getId()]);
-                if ($referrer_balance) {
-                    $referrer_balance->commission_amount += $commission;
-                    $referrer_balance->save();
-
-                }
-            }
-        }
-
-        $userBook = new UserBook();
-        $userBook->user_id = $user->getId();
-        $userBook->book_id = $book->id;
-        $userBook->amount = $book_price;
-        $userBook->commission = $commission;
-        if (!$userBook->save()) {
-            Yii::$app->session->setFlash('error', 'Unable to record the purchase, Please try again');
             return $this->redirect(['book/index']);
         }
 
@@ -98,6 +68,41 @@ class BookController extends Controller
         return $this->redirect(['book/index']);
     }
 
+    private function processPurchase($balance, $book)
+    {
+        $balance->amount -= $book->price;
+        if (!$balance->save()) {
+            return false;
+        }
+        $commission = $this->commissionService->handleCommission(Yii::$app->user->identity, $book);
+
+        return $this->recordUserBook(Yii::$app->user->identity->getId(), $book->id, $book->price, $commission);
+    }
+
+
+    private function recordUserBook($userId, $bookId, $amount, $commission)
+    {
+        $userBook = new UserBook();
+        $userBook->user_id = $userId;
+        $userBook->book_id = $bookId;
+        $userBook->amount = $amount;
+        $userBook->quantity = 1;
+        $userBook->commission = $commission;
+        return $userBook->save();
+    }
+
+
+
+
+    private function getUserBalance($user)
+    {
+        return $user->getBalance()->one();
+    }
+
+    private function hasEnoughBalance($balance, $bookPrice)
+    {
+        return $balance && $balance->amount >= $bookPrice;
+    }
 
 
 }

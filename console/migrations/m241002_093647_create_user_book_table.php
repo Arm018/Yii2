@@ -18,6 +18,7 @@ class m241002_093647_create_user_book_table extends Migration
             'book_id' => $this->integer()->notNull(),
             'amount' => $this->decimal(10, 2)->notNull(),
             'commission' => $this->decimal(10, 2)->defaultValue(0.00),
+            'quantity' => $this->integer()->notNull()->defaultValue(1),
             'purchase_date' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 

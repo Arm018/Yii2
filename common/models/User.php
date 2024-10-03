@@ -227,4 +227,9 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(UserBook::class, ['user_id' => 'id']);
 
     }
+
+    public function getCart()
+    {
+        return $this->hasMany(Cart::class, ['user_id' => 'id']);
+    }
 }

@@ -38,7 +38,8 @@ AppAsset::register($this);
             $menuItems = [
                 ['label' => 'Books', 'url' => ['/book/index']],
                 ['label' => 'Authors', 'url' => ['/author/index']],
-                ['label' => 'Profile', 'url' => ['/user/profile']]
+                ['label' => 'Profile', 'url' => ['/user/profile']],
+                ['label' => 'Cart', 'url' => ['/cart/index']],
             ];
         }
 

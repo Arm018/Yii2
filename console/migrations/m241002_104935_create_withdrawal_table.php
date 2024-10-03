@@ -16,7 +16,7 @@ class m241002_104935_create_withdrawal_table extends Migration
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull(),
             'amount' => $this->decimal(10, 2)->notNull(),
-            'status' => "ENUM('pending', 'approved', 'declined') NOT NULL DEFAULT 'pending'",
+            'status' => $this->integer()->notNull()->defaultValue(0),
             'request_date' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 

@@ -49,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php foreach ($books as $userBook): ?>
                     <li class="list-group-item" style="margin-top:30px">
                         <h5><?= Html::encode($userBook->book->title) ?></h5>
-                        <p>Price: $<?= Html::encode($userBook->amount) ?></p>
+                        <p>Total: $<?= Html::encode($userBook->amount) ?></p>
+                        <p>Quantity: <?= Html::encode($userBook->quantity) ?></p>
                         <p>Purchase Date: <?= Yii::$app->formatter->asDate($userBook->purchase_date) ?></p>
                     </li>
                 <?php endforeach; ?>
