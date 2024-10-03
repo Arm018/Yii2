@@ -1,6 +1,7 @@
 <?php
 
 /** @var \yii\web\View $this */
+
 /** @var string $content */
 
 use backend\assets\AppAsset;
@@ -60,6 +61,10 @@ AppAsset::register($this);
             [
                 'label' => 'Withdrawals',
                 'url' => ['/withdrawal/index']
+            ],
+            [
+                'label' => 'Users',
+                'url' => ['/user/index']
             ]
         ];
     } else {
@@ -104,7 +109,6 @@ AppAsset::register($this);
         <?= $content ?>
     </div>
 </main>
-
 
 
 <?php $this->endBody() ?>

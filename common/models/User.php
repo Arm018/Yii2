@@ -232,4 +232,9 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Cart::class, ['user_id' => 'id']);
     }
+
+    public function getReferrals()
+    {
+        return $this->hasMany(User::class, ['referrer_id' => 'id']);
+    }
 }
