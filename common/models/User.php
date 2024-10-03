@@ -216,4 +216,15 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+    public function getBalance()
+    {
+        return $this->hasOne(Balance::class, ['user_id' => 'id']);
+    }
+
+    public function getBooks()
+    {
+        return $this->hasMany(UserBook::class, ['user_id' => 'id']);
+
+    }
 }
