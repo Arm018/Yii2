@@ -78,7 +78,7 @@ class BookController extends Controller
         if (!$balance->save()) {
             return false;
         }
-        $commission = $this->commissionService->handleCommission(Yii::$app->user->identity, $book);
+        $commission = $this->commissionService->handleCommission(Yii::$app->user->identity, $book, 1);
 
         return $this->recordUserBook(Yii::$app->user->identity->getId(), $book->id, $book->price, $commission);
     }

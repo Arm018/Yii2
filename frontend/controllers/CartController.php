@@ -121,7 +121,7 @@ class CartController extends Controller
             return;
         }
 
-        $commission = $this->commissionService->handleCommission($user, $book);
+        $commission = $this->commissionService->handleCommission($user, $book, $quantity);
         if (!$this->recordUserBook($user->getId(), $book->id, $bookPrice, $quantity, $commission)) {
             Yii::$app->session->setFlash('error', 'Unable to record the purchase, Please try again');
             return;
