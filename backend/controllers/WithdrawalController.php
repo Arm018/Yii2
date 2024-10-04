@@ -2,8 +2,6 @@
 
 namespace backend\controllers;
 
-use backend\controllers\AdminController;
-use common\models\Balance;
 use common\models\User;
 use common\models\Withdrawal;
 use Yii;
@@ -13,7 +11,7 @@ use yii\web\NotFoundHttpException;
 class WithdrawalController extends AdminController
 {
 
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $withdrawals = Withdrawal::find()->all();
         return $this->render('index', [
@@ -50,7 +48,6 @@ class WithdrawalController extends AdminController
 
     /**
      * @throws Exception
-     * @throws NotFoundHttpException
      */
     public function actionDecline($id): \yii\web\Response
     {

@@ -9,7 +9,7 @@ use yii\web\Controller;
 class AdminController extends Controller
 {
 
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [

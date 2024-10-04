@@ -9,8 +9,10 @@ use backend\models\BookSearch;
 use backend\controllers\AdminController;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use Yii;
+use yii\db\Exception;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -24,7 +26,7 @@ class BookController extends AdminController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new BookSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -41,7 +43,7 @@ class BookController extends AdminController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -51,7 +53,8 @@ class BookController extends AdminController
     /**
      * Creates a new Book model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
+     * @throws Exception
      */
     public function actionCreate()
     {
@@ -70,10 +73,11 @@ class BookController extends AdminController
      * Updates an existing Book model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -90,10 +94,10 @@ class BookController extends AdminController
      * Deletes an existing Book model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return Response
+     * @throws NotFoundHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -107,7 +111,7 @@ class BookController extends AdminController
      * @return Book the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id)
     {
         if (($model = Book::findOne(['id' => $id])) !== null) {
             return $model;

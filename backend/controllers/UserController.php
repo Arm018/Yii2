@@ -3,13 +3,14 @@
 namespace backend\controllers;
 
 use common\models\User;
+use Throwable;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
+use yii\db\StaleObjectException;
 
 class UserController extends AdminController
 {
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => User::find(),
@@ -24,7 +25,11 @@ class UserController extends AdminController
     }
 
 
-    public function actionDelete($id)
+    /**
+     * @throws Throwable
+     * @throws StaleObjectException
+     */
+    public function actionDelete($id): \yii\web\Response
     {
         $user = User::findOne($id);
         $user->delete();

@@ -9,9 +9,11 @@ use backend\controllers\AdminController;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use Yii;
 
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -24,7 +26,7 @@ class AuthorController extends AdminController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new AuthorSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -41,7 +43,7 @@ class AuthorController extends AdminController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -51,7 +53,8 @@ class AuthorController extends AdminController
     /**
      * Creates a new Author model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
+     * @throws Exception
      */
     public function actionCreate()
     {
@@ -74,10 +77,10 @@ class AuthorController extends AdminController
      * Updates an existing Author model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return string|Response
+     * @throws NotFoundHttpException|Exception if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -94,7 +97,7 @@ class AuthorController extends AdminController
      * Deletes an existing Author model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
@@ -111,7 +114,7 @@ class AuthorController extends AdminController
      * @return Author the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id)
     {
         if (($model = Author::findOne(['id' => $id])) !== null) {
             return $model;
