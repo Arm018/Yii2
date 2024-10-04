@@ -24,7 +24,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -55,7 +55,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
@@ -234,7 +234,7 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionReferral($code)
+    public function actionReferral($code): \yii\web\Response
     {
         $cookie = new \yii\web\Cookie([
             'name' => 'referral_code',

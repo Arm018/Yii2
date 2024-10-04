@@ -7,7 +7,7 @@ use yii\web\Controller;
 
 class AuthorController extends Controller
 {
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $authors = Author::find()->all();
         return $this->render('index', [
@@ -15,7 +15,7 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function actionView($id)
+    public function actionView($id): string
     {
         $author = Author::findOne($id);
         return $this->render('view', [

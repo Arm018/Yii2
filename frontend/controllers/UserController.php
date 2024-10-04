@@ -10,11 +10,11 @@ use yii\web\Controller;
 
 class UserController extends Controller
 {
-    public function actionProfile()
+    public function actionProfile(): string
     {
         $user = Yii::$app->user->identity;
-        $books = UserBook::find()->where(['user_id' => $user->id])->all();
-        $balance = Balance::findOne(['user_id' => $user->id]);
+        $books = $user->books;
+        $balance = $user->balance;
         return $this->render('profile', [
             'user' => $user,
             'balance' => $balance,
@@ -22,10 +22,10 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionRequestWithdrawal()
+    public function actionRequestWithdrawal(): \yii\web\Response
     {
         $user = Yii::$app->user->identity;
-        $balance = Balance::findOne(['user_id' => $user->id]);
+        $balance = $user->balance;
 
         if ($balance === null || $balance->commission_amount <= 10) {
             Yii::$app->session->setFlash('error', 'You need at least $10 in your commission balance to request a withdrawal.');

@@ -9,6 +9,7 @@ use common\models\UserBook;
 use common\services\CommissionService;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -22,7 +23,7 @@ class BookController extends Controller
         $this->commissionService = $commissionService;
     }
 
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Book::find(),
@@ -36,7 +37,7 @@ class BookController extends Controller
         ]);
     }
 
-    public function actionView($id)
+    public function actionView($id): string
     {
         $book = Book::findOne($id);
         return $this->render('view', [
@@ -44,7 +45,7 @@ class BookController extends Controller
         ]);
     }
 
-    public function actionBuy($id)
+    public function actionBuy($id): \yii\web\Response
     {
         $book = Book::findOne($id);
 
@@ -68,7 +69,10 @@ class BookController extends Controller
         return $this->redirect(['book/index']);
     }
 
-    private function processPurchase($balance, $book)
+    /**
+     * @throws Exception
+     */
+    private function processPurchase($balance, $book): bool
     {
         $balance->amount -= $book->price;
         if (!$balance->save()) {
@@ -80,7 +84,10 @@ class BookController extends Controller
     }
 
 
-    private function recordUserBook($userId, $bookId, $amount, $commission)
+    /**
+     * @throws Exception
+     */
+    private function recordUserBook($userId, $bookId, $amount, $commission): bool
     {
         $userBook = new UserBook();
         $userBook->user_id = $userId;
@@ -99,7 +106,7 @@ class BookController extends Controller
         return $user->getBalance()->one();
     }
 
-    private function hasEnoughBalance($balance, $bookPrice)
+    private function hasEnoughBalance($balance, $bookPrice): bool
     {
         return $balance && $balance->amount >= $bookPrice;
     }

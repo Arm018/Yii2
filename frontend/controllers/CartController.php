@@ -9,6 +9,7 @@ use common\models\User;
 use common\models\UserBook;
 use common\services\CommissionService;
 use Yii;
+use yii\db\Exception;
 use yii\web\Controller;
 
 class CartController extends Controller
@@ -21,7 +22,7 @@ class CartController extends Controller
         $this->commissionService = $commissionService;
     }
 
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $user = Yii::$app->user->identity;
         $cartItems = $user->getCart()->with('book')->all();
@@ -31,7 +32,10 @@ class CartController extends Controller
         ]);
     }
 
-    public function actionAdd($id)
+    /**
+     * @throws Exception
+     */
+    public function actionAdd($id): \yii\web\Response
     {
         $user = Yii::$app->user->identity;
 
@@ -46,14 +50,14 @@ class CartController extends Controller
             $existingCart->quantity += $quantity;
             $existingCart->save();
         } else {
-            $this->createCart($id,$quantity);
+            $this->createCart($id, $quantity);
         }
 
         Yii::$app->session->setFlash('success', 'Book added to your cart.');
         return $this->redirect(['book/index']);
     }
 
-    public function actionRemove($id)
+    public function actionRemove($id): \yii\web\Response
     {
         $user = Yii::$app->user->identity;
 
@@ -73,7 +77,10 @@ class CartController extends Controller
         return $this->redirect(['cart/index']);
     }
 
-    public function actionBuy()
+    /**
+     * @throws Exception
+     */
+    public function actionBuy(): \yii\web\Response
     {
         $user = Yii::$app->user->identity;
         if ($user === null) {
@@ -90,6 +97,9 @@ class CartController extends Controller
         return $this->redirect(['user/profile']);
     }
 
+    /**
+     * @throws Exception
+     */
     private function processBookPurchase($user, $bookId, $quantity)
     {
         $book = Book::findOne($bookId);
@@ -126,7 +136,7 @@ class CartController extends Controller
         return $book->price * (int)$quantity;
     }
 
-    private function hasEnoughBalance($balance, $bookPrice)
+    private function hasEnoughBalance($balance, $bookPrice): bool
     {
         return $balance && $balance->amount >= $bookPrice;
     }
@@ -140,7 +150,10 @@ class CartController extends Controller
         return false;
     }
 
-    private function recordUserBook($userId, $bookId, $amount, $quantity, $commission)
+    /**
+     * @throws Exception
+     */
+    private function recordUserBook($userId, $bookId, $amount, $quantity, $commission): bool
     {
         $userBook = new UserBook();
         $userBook->user_id = $userId;
@@ -161,6 +174,9 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function createCart($id, $quantity)
     {
         $user = Yii::$app->user->identity;
