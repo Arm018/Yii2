@@ -237,4 +237,9 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(User::class, ['referrer_id' => 'id']);
     }
+
+    public function getReferredCount()
+    {
+        return $this->getReferrals()->count();
+    }
 }

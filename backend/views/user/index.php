@@ -30,19 +30,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'text',
             ],
             [
-                'label' => 'Referrals',
+                'label' => 'Referral Count',
                 'value' => function ($model) {
-                    $referrals = $model->referrals;
-                    if (empty($referrals)) {
-                        return 'No Referrals';
-                    }
-
-                    return 'Total Referrals: ' . count($referrals) . ' | ' . implode(', ', array_map(function ($referral) {
-                            return ' (ID: ' . $referral->id . ')';
-                        }, $referrals));
-
+                    return $model->getReferredCount();
                 },
-                'format' => 'raw',
+                'format' => 'text',
             ],
             [
                 'class' => 'yii\grid\ActionColumn',

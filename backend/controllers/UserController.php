@@ -12,7 +12,7 @@ class UserController extends AdminController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => User::find()->with('referrals'),
+            'query' => User::find(),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -22,6 +22,7 @@ class UserController extends AdminController
             'dataProvider' => $dataProvider,
         ]);
     }
+
 
     public function actionDelete($id)
     {
