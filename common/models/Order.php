@@ -4,29 +4,28 @@ namespace common\models;
 
 use yii\db\ActiveRecord;
 
-
 /**
- * This is the model class for table "user_book".
  *
  * @property int $id
  * @property int $user_id
- * @property int $book_id
- * @property float $amount
+ * @property float $total_amount
+ * @property float $commission
  * @property string $purchase_date
  */
-class UserBook extends ActiveRecord
+class Order extends ActiveRecord
 {
     public static function tableName()
     {
-        return 'user_book';
+        return 'orders';
     }
 
     public function rules()
     {
         return [
-            [['user_id', 'book_id'], 'required'],
-            [['user_id', 'book_id'], 'integer'],
-            ['amount', 'number', 'min' => 0],
+            [['user_id', 'total_amount'], 'required'],
+            [['user_id'], 'integer'],
+            ['total_amount', 'number', 'min' => 0],
+            ['commission', 'number', 'min' => 0],
             ['purchase_date', 'safe']
         ];
     }
@@ -36,8 +35,8 @@ class UserBook extends ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
-    public function getBook()
+    public function getOrderItems()
     {
-        return $this->hasOne(Book::class, ['id' => 'book_id']);
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id']);
     }
 }

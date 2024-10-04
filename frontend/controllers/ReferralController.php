@@ -23,10 +23,11 @@ class ReferralController extends Controller
         $monthlyData = array_fill(0, 12, 0.0);
 
         $results = (new \yii\db\Query())
-            ->select(['MONTH(purchase_date) AS month', 'SUM(commission) AS total_commission'])
-            ->from('{{%user_book}} ub')
-            ->innerJoin('{{%user}} u', 'ub.user_id = u.id')
-            ->where(['YEAR(purchase_date)' => date('Y')])
+            ->select(['MONTH(o.purchase_date) AS month', 'SUM(oi.commission) AS total_commission'])
+            ->from('{{%order_items}} oi')
+            ->innerJoin('{{%orders}} o', 'oi.order_id = o.id')
+            ->innerJoin('{{%user}} u', 'o.user_id = u.id')
+            ->where(['YEAR(o.purchase_date)' => date('Y')])
             ->andWhere(['u.referrer_id' => $userId])
             ->groupBy('month')
             ->all();
@@ -37,6 +38,7 @@ class ReferralController extends Controller
 
         return $monthlyData;
     }
+
 
 
 }

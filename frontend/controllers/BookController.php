@@ -4,8 +4,9 @@ namespace frontend\controllers;
 
 use common\models\Balance;
 use common\models\Book;
+use common\models\Order;
+use common\models\OrderItem;
 use common\models\User;
-use common\models\UserBook;
 use common\services\CommissionService;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -80,25 +81,43 @@ class BookController extends Controller
         }
         $commission = $this->commissionService->handleCommission(Yii::$app->user->identity, $book, 1);
 
-        return $this->recordUserBook(Yii::$app->user->identity->getId(), $book->id, $book->price, $commission);
+        return $this->recordOrder(Yii::$app->user->identity->getId(), $book->id, $book->price, $commission);
     }
 
 
     /**
      * @throws Exception
      */
-    private function recordUserBook($userId, $bookId, $amount, $commission): bool
+    private function recordOrder($userId, $bookId, $amount, $commission): bool
     {
-        $userBook = new UserBook();
-        $userBook->user_id = $userId;
-        $userBook->book_id = $bookId;
-        $userBook->amount = $amount;
-        $userBook->quantity = 1;
-        $userBook->commission = $commission;
-        return $userBook->save();
+        $transaction = Yii::$app->db->beginTransaction();
+
+        $order = new Order();
+        $order->user_id = $userId;
+        $order->total_amount = $amount;
+        $order->commission = $commission;
+
+        if (!$order->save()) {
+            $transaction->rollBack();
+            return false;
+        }
+
+        $orderItem = new OrderItem();
+        $orderItem->order_id = $order->id;
+        $orderItem->book_id = $bookId;
+        $orderItem->quantity = 1;
+        $orderItem->amount = $amount;
+        $orderItem->commission = $commission;
+
+        if (!$orderItem->save()) {
+            $transaction->rollBack();
+            return false;
+        }
+
+        $transaction->commit();
+        return true;
+
     }
-
-
 
 
     private function getUserBalance($user)

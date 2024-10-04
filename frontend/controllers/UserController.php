@@ -2,8 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\models\Balance;
-use common\models\UserBook;
 use common\models\Withdrawal;
 use Yii;
 use yii\web\Controller;
@@ -13,12 +11,12 @@ class UserController extends Controller
     public function actionProfile(): string
     {
         $user = Yii::$app->user->identity;
-        $books = $user->books;
+        $orders = $user->orders;
         $balance = $user->balance;
         return $this->render('profile', [
             'user' => $user,
             'balance' => $balance,
-            'books' => $books,
+            'orders' => $orders,
         ]);
     }
 

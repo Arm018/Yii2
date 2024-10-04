@@ -6,7 +6,7 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var common\models\User $user */
 /** @var common\models\Balance $balance */
-/** @var common\models\UserBook[] $books */
+/** @var common\models\Order[] $orders */
 
 $this->title = 'User Profile';
 $this->params['breadcrumbs'][] = $this->title;
@@ -29,22 +29,30 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <h2>Your Purchased Books</h2>
+    <h2>Your Orders</h2>
     <div>
-        <?php if ($books): ?>
+        <?php if ($orders): ?>
             <ul class="list-group">
-                <?php foreach ($books as $userBook): ?>
+                <?php foreach ($orders as $order): ?>
                     <li class="list-group-item" style="margin-top:30px">
-                        <h5><?= Html::encode($userBook->book->title) ?></h5>
-                        <p>Total: $<?= Html::encode($userBook->amount) ?></p>
-                        <p>Quantity: <?= Html::encode($userBook->quantity) ?></p>
-                        <p>Purchase Date: <?= Yii::$app->formatter->asDate($userBook->purchase_date) ?></p>
+                        <h4>Order Total: $<?= Html::encode($order->total_amount) ?></h4>
+                        <p>Commission: $<?= Html::encode($order->commission) ?></p>
+                        <p>Order Date: <?= Yii::$app->formatter->asDate($order->purchase_date) ?></p>
+                        <h5>Items:</h5>
+                        <ul>
+                            <?php foreach ($order->orderItems as $item): ?>
+                                <li>
+                                    <strong><?= Html::encode($item->book->title) ?></strong>
+                                    (Quantity: <?= Html::encode($item->quantity) ?>,
+                                    Amount: $<?= Html::encode($item->amount) ?>)
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </li>
                 <?php endforeach; ?>
             </ul>
         <?php else: ?>
-            <p>You have not purchased any books yet.</p>
+            <p>You have not placed any orders yet.</p>
         <?php endif; ?>
     </div>
-
 </div>

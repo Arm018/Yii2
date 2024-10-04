@@ -222,10 +222,14 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(Balance::class, ['user_id' => 'id']);
     }
 
-    public function getBooks()
+    public function getOrders()
     {
-        return $this->hasMany(UserBook::class, ['user_id' => 'id']);
+        return $this->hasMany(Order::class, ['user_id' => 'id']);
+    }
 
+    public function getOrderItems()
+    {
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->via('orders');
     }
 
     public function getCart()

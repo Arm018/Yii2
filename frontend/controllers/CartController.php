@@ -5,8 +5,9 @@ namespace frontend\controllers;
 use common\models\Balance;
 use common\models\Book;
 use common\models\Cart;
+use common\models\Order;
+use common\models\OrderItem;
 use common\models\User;
-use common\models\UserBook;
 use common\services\CommissionService;
 use Yii;
 use yii\db\Exception;
@@ -89,13 +90,43 @@ class CartController extends Controller
 
         $post = Yii::$app->request->post();
         $bookIds = array_keys($post['quantity']);
+        $orderItems = [];
 
         foreach ($bookIds as $bookId) {
-            $this->processBookPurchase($user, $bookId, $post['quantity'][$bookId]);
+            $book = Book::findOne($bookId);
+
+            $quantity = $post['quantity'][$bookId];
+            $bookPrice = $this->calculateBookPrice($book, $quantity);
+            $balance = $user->getBalance()->one();
+
+            if (!$this->hasEnoughBalance($balance, $bookPrice)) {
+                Yii::$app->session->setFlash('error', 'You don\'t have enough balance to buy this book');
+                return $this->redirect(['cart/index']);
+            }
+
+            if (!$this->deductBalance($balance, $bookPrice)) {
+                Yii::$app->session->setFlash('error', 'Unable to buy this book, Please try again');
+                return $this->redirect(['cart/index']);
+            }
+
+            $commission = $this->commissionService->handleCommission($user, $book, $quantity);
+
+            $orderItems[] = ['book_id' => $bookId, 'amount' => $bookPrice, 'quantity' => $quantity, 'commission' => $commission,];
         }
 
+        if (!$this->recordOrder($user->getId(), $orderItems)) {
+            Yii::$app->session->setFlash('error', 'Unable to record the purchase, Please try again');
+            return $this->redirect(['cart/index']);
+        }
+
+        foreach ($bookIds as $bookId) {
+            $this->removeFromCart($user->id, $bookId);
+        }
+
+        Yii::$app->session->setFlash('success', 'You have successfully purchased the books');
         return $this->redirect(['user/profile']);
     }
+
 
     /**
      * @throws Exception
@@ -122,7 +153,7 @@ class CartController extends Controller
         }
 
         $commission = $this->commissionService->handleCommission($user, $book, $quantity);
-        if (!$this->recordUserBook($user->getId(), $book->id, $bookPrice, $quantity, $commission)) {
+        if (!$this->recordOrder($user->getId(), $book->id, $bookPrice, $quantity, $commission)) {
             Yii::$app->session->setFlash('error', 'Unable to record the purchase, Please try again');
             return;
         }
@@ -153,17 +184,40 @@ class CartController extends Controller
     /**
      * @throws Exception
      */
-    private function recordUserBook($userId, $bookId, $amount, $quantity, $commission): bool
+    private function recordOrder($userId, $items): bool
     {
-        $userBook = new UserBook();
-        $userBook->user_id = $userId;
-        $userBook->book_id = $bookId;
-        $userBook->amount = $amount;
-        $userBook->quantity = (int)$quantity;
-        $userBook->commission = $commission;
+        $transaction = Yii::$app->db->beginTransaction();
 
-        return $userBook->save();
+        $order = new Order();
+        $order->user_id = $userId;
+        $order->total_amount = array_sum(array_column($items, 'amount'));
+        $order->commission = array_sum(array_column($items, 'commission'));
+
+        if (!$order->save()) {
+            $transaction->rollBack();
+            return false;
+        }
+
+        foreach ($items as $item) {
+            $orderItem = new OrderItem();
+            $orderItem->order_id = $order->id;
+            $orderItem->book_id = $item['book_id'];
+            $orderItem->quantity = $item['quantity'];
+            $orderItem->amount = $item['amount'];
+            $orderItem->commission = $item['commission'];
+
+            if (!$orderItem->save()) {
+                $transaction->rollBack();
+                return false;
+            }
+        }
+
+        $transaction->commit();
+        return true;
+
+
     }
+
 
     private function removeFromCart($userId, $bookId)
     {
