@@ -40,6 +40,7 @@ AppAsset::register($this);
                 ['label' => 'Authors', 'url' => ['/author/index']],
                 ['label' => 'Profile', 'url' => ['/user/profile']],
                 ['label' => 'Cart', 'url' => ['/cart/index']],
+                ['label' => 'Referrals', 'url' => ['/referral/index']],
             ];
         }
 

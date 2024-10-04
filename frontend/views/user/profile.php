@@ -12,19 +12,6 @@ $this->title = 'User Profile';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-settings">
-    <h2 class="mt-3">Referral Instruction</h2>
-    <div class="alert alert-info">
-        <strong>Referral Link Instructions:</strong>
-        <p>
-            Your referral link is a unique URL that you can share with others. When someone signs up using your link,
-            you will receive a 10% commission on their purchases.
-            Make sure to share your link widely to maximize your earnings!
-        </p>
-        <p>
-            Your referral link: <strong><a href="<?= Html::encode($user->referral_link) ?>" target="_blank"><?= Html::encode($user->referral_link) ?></a></strong>
-        </p>
-    </div>
-
     <div class="balance-info">
         <h2>Your Balance</h2>
         <p>
